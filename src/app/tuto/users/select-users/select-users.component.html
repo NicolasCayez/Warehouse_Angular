@@ -1,0 +1,5 @@
+<ul>
+  @for (item of items$ | async; track item.user_login) {
+    <li>{{item.user_login}} {{item.user_password}}</li>
+  }
+</ul>

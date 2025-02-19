@@ -1,0 +1,147 @@
+const express = require('express');
+const mysql = require('mysql');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+
+
+
+
+const corsOptions = {
+    origin: 'http://localhost:8100',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+const app = express();
+app.use(bodyParser.json());
+app.use(cors(corsOptions));
+
+
+
+// Configuration de la connexion MySQL
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    port: 3306,
+    password: '',
+    database: 'warehouse_symfony',
+});
+
+db.connect(err => {
+    if (err) {
+        console.error('Erreur de connexion à MySQL:', err);
+        return;
+    }
+    console.log('Connecté à la base de données MySQL.');
+});
+
+app.get('/user', (req, res) => {
+    db.query('SELECT * FROM user', (err, results) => {
+        if (err) {
+            console.error('Erreur lors de la requête:', err);
+            res.status(500).send('Erreur serveur');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+
+app.get('/user/:id', (req, res) => {
+    const id = req.params.id;
+    const sql = 'SELECT * FROM user WHERE id_user = ?';
+
+
+    db.query(sql,[id], (err, results) => {
+        if (err) {
+            console.error('Erreur lors de la requête:', err);
+            res.status(500).send('Erreur serveur');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+app.post('/user/' ,(req,res) => {
+
+    console.log(req.body.user)
+    const user = req.body.user;
+    // Exemple de requete : {"user": [["Toto", "123123", "nomdetoto", "toto", "toto.toto@example.com"]]}
+    const sql = 'INSERT INTO user (username, password, user_last_name, user_first_name, user_email) VALUES ?';
+
+
+    db.query(sql,[user], (err,results)=> {
+        if (err) {
+            console.error('Erreur lors de la requête:', err);
+            res.status(500).send('Erreur serveur');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+
+
+
+app.get('/courses', (req, res) => {
+    console.log("GET /courses");
+    db.query('SELECT * FROM course', (err, results) => {
+        if (err) {
+            console.error('Erreur lors de la requête:', err);
+            res.status(500).send('Erreur serveur');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+
+app.get('/course/:id', (req, res) => {
+    const id = req.params.id;
+    const sql = 'SELECT * FROM course WHERE id_course = ?';
+    
+    db.query(sql, [id], (err, results) => {
+        if (err) {
+            console.error('Erreur lors de la requête:', err);
+            res.status(500).send('Erreur serveur');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+
+app.get('/articles', (req, res) => {
+    db.query('SELECT * FROM article', (err, results) => {
+        if (err) {
+            console.error('Erreur lors de la requête:', err);
+            res.status(500).send('Erreur serveur');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+app.get('/article/:id', (req, res) => {
+    
+    const id = req.params.id;
+    const sql = 'SELECT * FROM article WHERE id_article = ?';
+    
+
+    db.query(sql,[id], (err, results) => {
+        if (err) {
+            console.error('Erreur lors de la requête:', err);
+            res.status(500).send('Erreur serveur');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+
+
+
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Serveur backend démarré sur http://localhost:${PORT}`);
+});

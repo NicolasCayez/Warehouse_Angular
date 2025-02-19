@@ -1,0 +1,7 @@
+<form>
+  <label for="username">username</label>
+  <input type="text" name="username" placeholder="username" [(ngModel)]="newLogin">
+  <label for="user_password">user_password</label>
+  <input type="text" name="user_password" placeholder="user_password" [(ngModel)]="newPassword">
+  <input type="submit" value="valider" (click)="onSubmitUser()">
+</form>
